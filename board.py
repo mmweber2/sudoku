@@ -47,11 +47,10 @@ class Board(object):
             if len(sublist) != len(self.board):
                 raise ValueError("Board boxes must be square")
             for item in sublist:
-                if item not in range(0-9):
-                    raise ValueError("Board must contain only single digit integers")
-                if item > len(self.board):
+                if item not in range(len(self.board)):
                     raise ValueError(
-                        "Board numbers must be in range 0 <= x <= board size")
+                        "Board numbers must be integers in range " +
+                        "0 <= x <= board size")
         if not self._is_valid_board():
             raise ValueError(
                 "Board rows, columns, and boxes must not " +
@@ -114,7 +113,7 @@ class Board(object):
         Zeroes are ignored, since they represent blank spaces.
 
         Args:
-            row: The integer index of the row of this board to check.
+            row: The zero-indexed integer of the row of this board to check.
             Must be in the range 0 <= x < board_size, so 0 <= x < 9
             for a standard 9x9 board.
 
@@ -125,7 +124,7 @@ class Board(object):
             ValueError: row is outside the valid range for this board.
         """
         self._valid_pos(row)
-        return set([x for x in self.board[row] if x != 0])
+        return set(self.board[row]) - set([0])
 
     def _numbers_in_column(self, col):
         """Returns a set of the numbers in this column.
@@ -133,7 +132,7 @@ class Board(object):
         Zeroes are ignored, since they represent blank spaces.
 
         Args:
-            col: The integer index of the column of this board to check.
+            col: The zero-indexed integer of the column of this board to check.
             Must be in the range 0 <= x < board_size, so 0 <= x < 9
             for a standard 9x9 board.
 
@@ -175,11 +174,13 @@ class Board(object):
         Raises:
             ValueError: col is outside the valid range for this board.
         """
-        # Don't use _valid_pos because box requirements are more specific
+        # Don't use _valid_pos; box requirements are more specific
         size = self.board_size
-        for p in (box_start_row, box_start_col):
-            if type(p) != int or not (0 <= p < size and p % self.box_size == 0):
-                raise ValueError("Invalid box start number: {}".format(p))
+        for start in (box_start_row, box_start_col):
+            if not isinstance(start, int):
+                raise TypeError("Box start numbers must be integers")
+            if not (0 <= start < size and start % self.box_size == 0):
+                raise ValueError("Invalid box start number: {}".format(start))
         box_numbers = set()
         for i in xrange(box_start_row, box_start_row + self.box_size):
             for j in xrange(box_start_col, box_start_col + self.box_size):
@@ -196,13 +197,14 @@ class Board(object):
             0 <= x < board_size.
 
         Returns:
-            A list of numbers in the range 1 to board size that are not
-            already part of the given position's row, column, or box, and so
-            can be played at the given position.
+            A set of numbers in the range 1 to board size (inclusive)
+            that are not already part of the given position's row,
+            column, or box, and so can be played at the given position.
 
         Raises:
-            ValueError: row or column are not integers, or are not in
-            the range 0 <= x < board size.
+            TypeError: row or column are not integers.
+
+            ValueError: row or column are not in the range 0 <= x < board size.
 
             IndexError: The position at row, column is not empty; it
             contains a number > 0.
@@ -211,7 +213,7 @@ class Board(object):
         self._valid_pos(column)
         if self.board[row][column] != 0:
             raise IndexError(
-                "Non-zero Number already at position {},{}: {}".format(
+                "Non-zero number already at position {},{}: {}".format(
                     row, column, self.board[row][column])
                 )
         used_numbers = self._numbers_in_row(row)
@@ -222,24 +224,18 @@ class Board(object):
         x = row / self.box_size * self.box_size
         y = column / self.box_size * self.box_size
         used_numbers.update(self._numbers_in_box(x, y))
-        return [move for move in xrange(1, 10) if move not in used_numbers]
+        return set(xrange(1, self.board_size + 1)) - used_numbers
 
     def _valid_pos(self, index):
         """Checks whether the given index is valid for this Board.
-        
+
         Args:
             index: The index to check. A valid index is an integer in
             the range 0 <= x < board_size.
-            Since all Boards must be square, a valid row is necessarily a
-            valid column, and vice versa.
-            
+            Since all Boards must be square, a valid row number is a
+            valid column number, and vice versa.
+
         Returns:
             True iff index is a valid row or column index.
-
-        Raises:
-            ValueError: index is not an error, or is outside the range
-            of this Board.
         """
-        if type(index) != int or not 0 <= index < self.board_size:
-            raise ValueError("Position out of range: {}".format(index))
-        return True
+        return index in xrange(self.board_size)
