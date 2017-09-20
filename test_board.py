@@ -2,8 +2,6 @@ from board import Board
 from nose.tools import assert_raises
 from nose.tools import assert_equals
 
-# Test Board
-
 # Taken from online puzzle generator
 def test_is_valid_start_board_valid():
     input_array = [
@@ -17,6 +15,21 @@ def test_is_valid_start_board_valid():
         [2, 0, 3, 0, 0, 0, 0, 6, 0],
         [1, 5, 0, 0, 6, 0, 0, 0, 0]
         ]
+    b = Board(input_array)
+    assert b._is_valid_start_board()
+
+def test_is_valid_start_board_size_4():
+    input_array = [
+        [0, 0, 0, 0],
+        [1, 2, 3, 4],
+        [2, 0, 1, 0],
+        [0, 0, 0, 0]
+    ]
+    b = Board(input_array)
+    assert b._is_valid_start_board()
+
+def test_is_valid_start_board_size_25():
+    input_array = [[0] * 25 for _ in xrange(25)]
     b = Board(input_array)
     assert b._is_valid_start_board()
 
