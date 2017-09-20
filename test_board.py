@@ -28,8 +28,14 @@ def test_is_valid_start_board_size_4():
     b = Board(input_array)
     assert b._is_valid_start_board()
 
-def test_is_valid_start_board_size_25():
+def test_is_valid_start_board_size_25_empty():
     input_array = [[0] * 25 for _ in xrange(25)]
+    b = Board(input_array)
+    assert b._is_valid_start_board()
+
+def test_is_valid_start_double_digit_values():
+    input_array = [[0] * 25 for _ in xrange(25)]
+    input_array[0] = range(1, 26)
     b = Board(input_array)
     assert b._is_valid_start_board()
 
