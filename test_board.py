@@ -3,6 +3,7 @@ from nose.tools import assert_raises
 from nose.tools import assert_equals
 
 # Taken from online puzzle generator
+
 def test_is_valid_start_board_valid():
     input_array = [
         [0, 0, 0, 0, 9, 0, 0, 5, 2],
@@ -15,8 +16,9 @@ def test_is_valid_start_board_valid():
         [2, 0, 3, 0, 0, 0, 0, 6, 0],
         [1, 5, 0, 0, 6, 0, 0, 0, 0]
         ]
-    b = Board(input_array)
-    assert b._is_valid_start_board()
+    # The Board constructor raises a ValueError if the board is invalid
+    # _is_valid_start_board() called by constructor.
+    assert Board(input_array)
 
 def test_is_valid_start_board_size_4():
     input_array = [
@@ -25,19 +27,16 @@ def test_is_valid_start_board_size_4():
         [2, 0, 1, 0],
         [0, 0, 0, 0]
     ]
-    b = Board(input_array)
-    assert b._is_valid_start_board()
+    assert Board(input_array)
 
 def test_is_valid_start_board_size_25_empty():
     input_array = [[0] * 25 for _ in xrange(25)]
-    b = Board(input_array)
-    assert b._is_valid_start_board()
+    assert Board(input_array)
 
 def test_is_valid_start_double_digit_values():
     input_array = [[0] * 25 for _ in xrange(25)]
     input_array[0] = range(1, 26)
-    b = Board(input_array)
-    assert b._is_valid_start_board()
+    assert Board(input_array)
 
 def test_board_constructor_valid():
     input_array = [
