@@ -83,6 +83,7 @@ def test_is_valid_start_board_no_inner_list():
 # For now, an empty board is valid
 def test_is_valid_start_board_empty():
     b = Board(([[0] * 9 for _ in xrange(9)]))
+    assert b
 
 def test_is_valid_start_board_non_int():
     input_array = [[0] * 9 for _ in xrange(9)]
@@ -128,7 +129,7 @@ def test_is_valid_board_valid():
                    [1, 5, 0, 0, 6, 0, 0, 0, 0]
                   ]
     b = Board(input_array)
-    assert b != None
+    assert b
 
 # Duplicates are somewhat hidden in the boxes because I wanted to test
 # situations where only the row, column, or box had a duplicate, and
