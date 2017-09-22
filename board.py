@@ -23,6 +23,8 @@ class Board(object):
         self.box_size = int(sqrt(self.board_size))
         self._is_valid_start_board()
 
+    # TODO: Make this a static method
+    # TODO: Check if this board has multiple solutions
     def _is_valid_start_board(self):
         """Confirms that a Board is in valid Sudoku format.
 
@@ -57,6 +59,7 @@ class Board(object):
                 "contain non-zero duplicates")
         return True
 
+    # TODO: Make this a static method?
     def _is_valid_board(self):
         """Determines whether this Board is valid.
 
@@ -229,14 +232,37 @@ class Board(object):
 
     def _valid_pos(self, index):
         """Checks whether the given index is valid for this Board.
-        
+
         Args:
-            index: The index to check. A valid index is an integer in
+            index: integer, the index to check. A valid index is an integer in
             the range 0 <= x < board_size.
+
             Since all Boards must be square, a valid row number is a
             valid column number, and vice versa.
-            
+
         Returns:
             True iff index is a valid row or column index.
         """
         return index in xrange(self.board_size)
+
+    # TODO: Remove this function since it's just one assignment?
+    def make_move(self, row, col, move):
+        """Plays a move in a given position.
+
+        This method does not check the validity of the move, so it can create
+        invalid or non-winnable boards. The board is modified by the operation.
+
+        All three parameters must be in the range 0 <= x < board size.
+
+        Args:
+            row: integer, the row of the position.
+            
+            col: integer, the column of the position.
+
+            move: integer, the number to play at the given position.
+        """
+        self.board[row][col] = move
+
+
+          
+
