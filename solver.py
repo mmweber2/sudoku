@@ -15,11 +15,7 @@ def _find_empty_spots(board):
     return spots
 
 # Recursive move searcher and implementer
- 
- # TODO: Don't modify board here directly
-# TODO: Split actual move making into separate program
 # TODO: Rename to reflect searching, not making moves
-# TODO: Fill boxes in order of constraints?
 # TODO: Is it better to use recursion or a stack?
 def fill_board(board):
     """
@@ -36,7 +32,7 @@ def fill_board(board):
             return False
         elif len(remaining) == 1:
             # Make move and continue
-            board[row][col] = remaining[0]
+            board.board[row][col] = remaining.pop()
             return fill_board(board)
         else:
             # Find most constrained position, if no 1s or 0s
@@ -51,7 +47,7 @@ def fill_board(board):
         # These moves could be wrong, so make a copy of the board
         for option in move.options:
             board_copy = copy.deepcopy(board)
-            board_copy[move.row][move.col] = option
+            board_copy.board[move.row][move.col] = option
             if fill_board(board_copy):
                 return True
     return False
