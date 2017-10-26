@@ -9,6 +9,7 @@ class Board(object):
         Per the rules of Sudoku, each board consists of 9 squares, each
         of which contains 9 numbers in a 3x3 box. Each number appears
         exactly once in each 3x3 square, row, and column.
+        Does not test whether board_array has duplicate values.
 
         Args:
             board_array: A 9x9 2D list containing the initial board setup.
@@ -34,9 +35,10 @@ class Board(object):
         """Confirms that a board array is in valid Sudoku format.
 
         Does not confirm whether it is possible to solve this board.
+        Does not confirm whether this board has duplicate values.
 
         Returns:
-            True if board_array is in the valid format valid.
+            True if board_array is in the valid format.
 
         Raises:
             TypeError: board_array is not a list or tuple.
@@ -46,8 +48,13 @@ class Board(object):
         if type(board_array) not in (list, tuple):
             raise TypeError("Board must be a 2D list or tuple")
         board_size = len(board_array)
+        box_size = int(board_size**0.5)
+        # box_size converts to an int, so make sure it's really a square number
+        if box_size * box_size != board_size:
+            raise ValueError("Board boxes must be square")
         valid_values = set(xrange(board_size + 1))
         for sublist in board_array:
+            #print "Sublist is ", sublist
             if type(sublist) not in (list, tuple):
                 raise TypeError("Board must contain only lists or tuples")
             if len(sublist) != board_size:
@@ -57,10 +64,6 @@ class Board(object):
                     raise ValueError(
                         "Board numbers must be integers in range " +
                         "0 <= x <= board size")
-        if not self._is_valid_board():
-            raise ValueError(
-                "Board rows, columns, and boxes must not " +
-                "contain non-zero duplicates")
         return True
 
     # TODO: Make this a static method?
