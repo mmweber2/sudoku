@@ -18,41 +18,42 @@ class Board(object):
         Raises:
             ValueError: board_array is not a valid board configuration.
         """
+        if not Board._is_valid_start_board(board_array):
+            raise ValueError("Invalid start board configuration.")
         self.board = board_array
         self.board_size = len(board_array)
         self.box_size = int(sqrt(self.board_size))
-        self._is_valid_start_board()
+        self.empty_count = self.board_size * self.board_size
 
     def __str__(self):
         return "\n".join(" ".join(str(x) for x in row) for row in self.board)
 
-    # TODO: Make this a static method
     # TODO: Check if this board has multiple solutions
-    def _is_valid_start_board(self):
-        """Confirms that a Board is in valid Sudoku format.
+    @staticmethod
+    def _is_valid_start_board(board_array):
+        """Confirms that a board array is in valid Sudoku format.
 
         Does not confirm whether it is possible to solve this board.
 
         Returns:
-            True if the board is valid.
+            True if board_array is in the valid format valid.
 
         Raises:
-            TypeError: Board is not a list or tuple.
+            TypeError: board_array is not a list or tuple.
 
-            ValueError: Board is not a valid board configuration.
+            ValueError: board_array is not a valid board configuration.
         """
-        if type(self.board) not in (list, tuple):
+        if type(board_array) not in (list, tuple):
             raise TypeError("Board must be a 2D list or tuple")
-        # box_size converts to an int, so make sure it's really a square number
-        if self.box_size != sqrt(len(self.board)):
-            raise ValueError("Board boxes must be square")
-        for sublist in self.board:
+        board_size = len(board_array)
+        valid_values = set(xrange(board_size + 1))
+        for sublist in board_array:
             if type(sublist) not in (list, tuple):
                 raise TypeError("Board must contain only lists or tuples")
-            if len(sublist) != len(self.board):
+            if len(sublist) != board_size:
                 raise ValueError("Board boxes must be square")
             for item in sublist:
-                if item not in range(len(self.board) + 1):
+                if item not in valid_values:
                     raise ValueError(
                         "Board numbers must be integers in range " +
                         "0 <= x <= board size")
@@ -247,3 +248,29 @@ class Board(object):
             True iff index is a valid row or column index.
         """
         return index in xrange(self.board_size)
+
+    def make_move(self, row, column, play):
+        """If possible, plays the given number at the given position.
+
+        Does not check whether the move is the right answer for that position.
+        Does not check the validity of the indices or the play.
+
+        Args:
+            row, column: The zero-indexed integer row and column
+                numbers for the position. Must be in the range
+                0 <= x < board_size.
+            play: The number to play at this position. Must be in the range
+                0 <= x < board_size.
+
+        Returns:
+            True if the play was made successfully, False otherwise.
+        """
+        if play == 0:
+            # Undo a move
+            self.board[row][column] = 0
+            self.empty_count += 1
+            return True
+        # Make a normal move
+        self.board[row][column] = play
+        self.empty_count -= 1
+        return True
