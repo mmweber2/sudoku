@@ -56,7 +56,7 @@ def test_board_constructor_valid():
 def test_is_valid_start_board_wrong_outer_size():
     input_array = [[1, 0], [0, 0]]
     with assert_raises(ValueError) as cm:
-      Board(input_array)
+        Board._is_valid_start_board(input_array)
     assert_equals(str(cm.exception), "Board boxes must be square")
 
 def test_is_valid_start_board_wrong_inner_size():
@@ -83,6 +83,7 @@ def test_is_valid_start_board_no_inner_list():
 # For now, an empty board is valid
 def test_is_valid_start_board_empty():
     b = Board(([[0] * 9 for _ in xrange(9)]))
+    # Constructor contains 
     assert b
 
 def test_is_valid_start_board_non_int():
@@ -100,21 +101,6 @@ def test_is_valid_start_board_invalid_ints():
         Board(input_array)
     assert_equals(str(cm.exception), "Board numbers must be integers " +
                   "in range 0 <= x <= board size")
-
-def test_is_valid_start_board_duplicates():
-    input_array = [
-                   # 2 2s in this row
-                   [0, 0, 0, 0, 9, 2, 0, 5, 2],
-                   [0, 1, 0, 0, 0, 0, 3, 0, 4],
-                   [0, 0, 2, 3, 1, 5, 0, 0, 9],
-                   [0, 0, 8, 7, 4, 6, 0, 3, 0],
-                   [0, 7, 0, 9, 0, 1, 0, 2, 0],
-                   [0, 9, 0, 2, 5, 3, 7, 0, 0],
-                   [4, 0, 0, 5, 3, 8, 2, 0, 0],
-                   [2, 0, 3, 0, 0, 0, 0, 6, 0],
-                   [1, 5, 0, 0, 6, 0, 0, 0, 0]
-                  ]
-    assert_raises(ValueError, Board, input_array)
 
 def test_is_valid_board_valid():
     input_array = [
@@ -147,7 +133,8 @@ def test_is_valid_board_duplicate_row():
                    [2, 0, 3, 0, 0, 0, 0, 6, 0],
                    [1, 5, 0, 0, 6, 0, 0, 0, 0]
                   ]
-    assert_raises(ValueError, Board, input_array)
+    b = Board(input_array)
+    assert not b._is_valid_board()
 
 def test_is_valid_board_duplicate_column():
     input_array = [
@@ -162,7 +149,8 @@ def test_is_valid_board_duplicate_column():
                    # second 1 in the first column
                    [0, 5, 0, 0, 6, 1, 0, 0, 0]
                   ]
-    assert_raises(ValueError, Board, input_array)
+    b = Board(input_array)
+    assert not b._is_valid_board()
 
 def test_is_valid_board_duplicate_in_box():
     input_array = [
@@ -177,7 +165,8 @@ def test_is_valid_board_duplicate_in_box():
                    [2, 0, 3, 0, 0, 0, 0, 6, 0],
                    [1, 5, 0, 0, 6, 0, 0, 0, 0]
                   ]
-    assert_raises(ValueError, Board, input_array)
+    b = Board(input_array)
+    assert not b._is_valid_board()
 
 # The _numbers_in_row tests don't need checking for duplicates because
 # that will be done when the board is created.
