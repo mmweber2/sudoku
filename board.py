@@ -24,7 +24,10 @@ class Board(object):
         self.board = board_array
         self.board_size = len(board_array)
         self.box_size = int(sqrt(self.board_size))
-        self.empty_count = self.board_size * self.board_size
+        filled_numbers = 0
+        for row in board_array:
+            filled_numbers += sum(1 for x in row if x)
+        self.empty_count = (self.board_size * self.board_size) - filled_numbers
 
     def __str__(self):
         return "\n".join(" ".join(str(x) for x in row) for row in self.board)
@@ -54,7 +57,6 @@ class Board(object):
             raise ValueError("Board boxes must be square")
         valid_values = set(xrange(board_size + 1))
         for sublist in board_array:
-            #print "Sublist is ", sublist
             if type(sublist) not in (list, tuple):
                 raise TypeError("Board must contain only lists or tuples")
             if len(sublist) != board_size:
@@ -66,7 +68,6 @@ class Board(object):
                         "0 <= x <= board size")
         return True
 
-    # TODO: Make this a static method?
     def _is_valid_board(self):
         """Determines whether this Board is valid.
 
@@ -82,6 +83,9 @@ class Board(object):
         Returns:
             True iff the board is valid, and False otherwise.
         """
+        # We can't use _numbers_in_row, _numbers_in_column,
+        #    or _numbers_in_box for these because those don't
+        #    check for duplicates.
         # Check rows
         for i in xrange(self.board_size):
             row_numbers = set()
@@ -227,6 +231,9 @@ class Board(object):
                 "Non-zero number already at position {},{}: {}".format(
                     row, column, self.board[row][column])
                 )
+        print "Board is currently "
+        print self
+        print "Row, col are ", row, column
         used_numbers = self._numbers_in_row(row)
         # Combine all the used numbers together because we don't care where
         # they were used, just that they are no longer possible
@@ -235,6 +242,7 @@ class Board(object):
         x = row / self.box_size * self.box_size
         y = column / self.box_size * self.box_size
         used_numbers.update(self._numbers_in_box(x, y))
+        print "Used numbers is now ", used_numbers
         return set(xrange(1, self.board_size + 1)) - used_numbers
 
     def _valid_pos(self, index):
@@ -264,16 +272,18 @@ class Board(object):
                 0 <= x < board_size.
             play: The number to play at this position. Must be in the range
                 0 <= x < board_size.
-
-        Returns:
-            True if the play was made successfully, False otherwise.
         """
+        if self.board[row][column] == play:
+            # Don't change the empty count if there is no change in the board
+            return
         if play == 0:
             # Undo a move
+            #print "Undoing move: ", row, column
+            #print "Before, board was ", self
             self.board[row][column] = 0
             self.empty_count += 1
-            return True
-        # Make a normal move
-        self.board[row][column] = play
-        self.empty_count -= 1
-        return True
+            #print "After, board is ", self
+        else:
+            # Make a normal move
+            self.board[row][column] = play
+            self.empty_count -= 1
