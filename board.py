@@ -227,9 +227,6 @@ class Board(object):
                 "Non-zero number already at position {},{}: {}".format(
                     row, column, self.board[row][column])
                 )
-        print "Board is currently "
-        print self
-        print "Row, col are ", row, column
         used_numbers = self._numbers_in_row(row)
         # Combine all the used numbers together because we don't care where
         # they were used, just that they are no longer possible
@@ -238,7 +235,6 @@ class Board(object):
         x = row / self.box_size * self.box_size
         y = column / self.box_size * self.box_size
         used_numbers.update(self._numbers_in_box(x, y))
-        print "Used numbers is now ", used_numbers
         return set(xrange(1, self.board_size + 1)) - used_numbers
 
     def _valid_pos(self, index):
