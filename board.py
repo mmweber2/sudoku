@@ -251,20 +251,3 @@ class Board(object):
             True iff index is a valid row or column index.
         """
         return index in xrange(self.board_size)
-
-    def make_move(self, row, column, play):
-        """If possible, plays the given number at the given position.
-
-        Does not check whether the move is the right answer for that position.
-        Does not check the validity of the indices or the play.
-
-        A play of 0 is considered undoing a move.
-
-        Args:
-            row, column: The zero-indexed integer row and column
-                numbers for the position. Must be in the range
-                0 <= x < board_size.
-            play: The number to play at this position. Must be in the range
-                0 <= x < board_size.
-        """
-        self.board[row][column] = play

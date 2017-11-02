@@ -32,7 +32,7 @@ def fill_board(board):
             return None
         elif len(remaining) == 1:
             # Make move and continue
-            board.make_move(row, col, remaining.pop())
+            board.board[row][col] = remaining.pop()
             return fill_board(board)
         else:
             # Find most constrained position, if no 1s or 0s
@@ -45,7 +45,7 @@ def fill_board(board):
     # Otherwise, make one of the most constrained moves
     for move in next_moves:
         for option in move.options:
-            board.make_move(move.row, move.col, option)
+            board.board[move.row][move.col] = option
             # fill_board will attempt to fill the board passed to it.
             # If it's not successful, it will contain moves that don't lead to
             #   a valid solution, with no path to undoing them.
