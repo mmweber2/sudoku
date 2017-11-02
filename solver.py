@@ -4,7 +4,6 @@ import copy
 # A move has a row, column, and other options to play instead
 Move = namedtuple('Move', 'row col options')
 
-
 # TODO: Cache this and have board keep track of it?
 def _find_empty_spots(board):
     spots = []
@@ -15,12 +14,13 @@ def _find_empty_spots(board):
     return spots
 
 # Recursive move searcher and implementer
-# TODO: Rename to reflect searching, not making moves
 # TODO: Is it better to use recursion or a stack?
 def fill_board(board):
     """
-    Raises:
-        ValueError: board is not winnable from the given position.
+    Fully solves the board, if possible, and returns the result.
+
+    Returns:
+        The solved board object if the board is solvable, None otherwise.
     """
     # Set a maximum value for moves remaining from a square
     smallest_move = float("inf")
@@ -29,10 +29,10 @@ def fill_board(board):
         remaining = board.valid_moves(row, col)
         if not remaining:
             # Dead-end position
-            return False
+            return None
         elif len(remaining) == 1:
             # Make move and continue
-            board.board[row][col] = remaining.pop()
+            board.make_move(row, col, remaining.pop())
             return fill_board(board)
         else:
             # Find most constrained position, if no 1s or 0s
@@ -41,13 +41,16 @@ def fill_board(board):
                 next_moves.append(Move(row, col, remaining))
     # Check for won position
     if not next_moves and board._is_valid_board():
-        return True
+        return board
     # Otherwise, make one of the most constrained moves
     for move in next_moves:
-        # These moves could be wrong, so make a copy of the board
         for option in move.options:
+            board.make_move(move.row, move.col, option)
+            # fill_board will attempt to fill the board passed to it.
+            # If it's not successful, it will contain moves that don't lead to
+            #   a valid solution, with no path to undoing them.
             board_copy = copy.deepcopy(board)
-            board_copy.board[move.row][move.col] = option
             if fill_board(board_copy):
-                return True
-    return False
+                # Pass up the winning board
+                return board_copy
+    return None
