@@ -24,10 +24,6 @@ class Board(object):
         self.board = board_array
         self.board_size = len(board_array)
         self.box_size = int(sqrt(self.board_size))
-        filled_numbers = 0
-        for row in board_array:
-            filled_numbers += sum(1 for x in row if x)
-        self.empty_count = (self.board_size * self.board_size) - filled_numbers
 
     def __str__(self):
         return "\n".join(" ".join(str(x) for x in row) for row in self.board)
@@ -266,6 +262,8 @@ class Board(object):
         Does not check whether the move is the right answer for that position.
         Does not check the validity of the indices or the play.
 
+        A play of 0 is considered undoing a move.
+
         Args:
             row, column: The zero-indexed integer row and column
                 numbers for the position. Must be in the range
@@ -273,17 +271,4 @@ class Board(object):
             play: The number to play at this position. Must be in the range
                 0 <= x < board_size.
         """
-        if self.board[row][column] == play:
-            # Don't change the empty count if there is no change in the board
-            return
-        if play == 0:
-            # Undo a move
-            #print "Undoing move: ", row, column
-            #print "Before, board was ", self
-            self.board[row][column] = 0
-            self.empty_count += 1
-            #print "After, board is ", self
-        else:
-            # Make a normal move
-            self.board[row][column] = play
-            self.empty_count -= 1
+        self.board[row][column] = play
