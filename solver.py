@@ -41,6 +41,7 @@ def fill_board(board):
                 next_moves.append(Move(row, col, remaining))
     # Check for won position
     if not next_moves and board._is_valid_board():
+        # Pass up the winning board (which is probably a copy of the original)
         return board
     # Otherwise, make one of the most constrained moves
     for move in next_moves:
@@ -48,9 +49,10 @@ def fill_board(board):
             board.board[move.row][move.col] = option
             # fill_board will attempt to fill the board passed to it.
             # If it's not successful, it will contain moves that don't lead to
-            #   a valid solution, with no path to undoing them.
-            board_copy = copy.deepcopy(board)
-            if fill_board(board_copy):
+            #   a valid solution, with no path to undoing them, so make a copy.
+            end_result = fill_board(copy.deepcopy(board))
+            # end_result will be None unless it is fully complete.
+            if end_result:
                 # Pass up the winning board
-                return board_copy
+                return end_result
     return None
