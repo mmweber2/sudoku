@@ -13,6 +13,34 @@ def _find_empty_spots(board):
                 spots.append((row, col))
     return spots
 
+def count_solutions(board):
+    """
+    Counts the number of solutions for this board, up to 2.
+
+    If the count is 0, the board cannot be solved from the current configuration.
+
+    This function aborts counting after 2 solutions are found.
+
+    Returns:
+        One of the integers 0, 1, or 2.
+    """
+    # TODO: Remove unnecessary code from fill_board
+    # For now, don't worry about finding most constrained position
+    solutions = 0
+    for row, col in _find_empty_spots(board):
+        remaining = board.valid_moves(row, col)
+        if not remaining:
+            # Dead-end position
+            return 0
+        for move in remaining:
+            # Try all of these moves
+            board.board[row][col] = move
+            if fill_board(board):
+                solutions += 1
+                if solutions == 2:
+                    return 2
+    return solutions # Should be 0 or 1
+
 # Recursive move searcher and implementer
 # TODO: Is it better to use recursion or a stack?
 def fill_board(board):
@@ -41,8 +69,10 @@ def fill_board(board):
                 next_moves.append(Move(row, col, remaining))
     # Check for won position
     if not next_moves and board._is_valid_board():
-        # Pass up the winning board (which is probably a copy of the original)
+        # Pass up the winning board
         return board
+    # Check for more than one winning solution
+    found_winning_move = False
     # Otherwise, make one of the most constrained moves
     for move in next_moves:
         for option in move.options:
