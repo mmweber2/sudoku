@@ -1,26 +1,44 @@
 from board import Board
+from solver import fill_board
 from math import sqrt
 import random
 
-def generate(size=9):
-    """Generates a new board of the given size.
+def generate_full_board():
+    """Generates a new, completed board.
 
-    Args:
-        size: integer, the length/width of the board. Must be a squared integer
-            in the range 4 <= size <= 100.
-            Example sizes include 4, 9, and 25.
-            Defaults to 9, the standard sudoku board size.
-
-    Raises:
-        ValueError: size is not a valid board size.
+    Returns:
+        A randomly generated, filled Board object.
     """
-    if sqrt(size) not in (4, 9, 25, 36, 49, 64, 81, 100):
-        raise ValueError("Board size must be a squared integer <= 100.")
-    board_array = [[0] * size for _ in xrange(size)]
-    board = Board(board_array)
-    for row in xrange(size):
-        for col in xrange(size):
-            possible_moves = list(board.valid_moves(row, col))
-            rand = random.randint(0, len(possible_moves) - 1)
-            board.make_move(row, col, possible_moves[rand])
+    # Randomly fill the first row, fill the rest, then make a transfomation
+    first_row = random.sample(xrange(1, 10), 9)
+    input_array = [first_row] + [([0] * 9) for _ in xrange(8)]
+    return fill_board(Board(input_array))
+
+def remove_moves(board):
+    """Removes moves from board as long as there is only one valid solution."""
+    # Generate 0-81 and shuffle them
+    # random.shuffle exists, but according to the documentation, it doesn't
+    #   generate most permutations, so I use random.sample.
+    all_positions = random.sample(range(81), 81)
+    # If removing a number creates more than one solution, it will only get worse
+    #   as more numbers are removed, so don't try the same position twice.
+    # Whether or not a number is removed, it should only be tried once.
+    tried_positions = set()
+    while True:
+        current = all_positions.pop()
+        # Map full number to row, col pair
+        c_row = current / 9
+        c_col = current % 9
+        answer_number = board[c_row][c_col]
+        board[c_row][c_col] = 0
+        if len(board.valid_moves(c_row, c_col)) == 1:
+            # TODO
+            pass
+
+        
+
+
+
+
+
 
