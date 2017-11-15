@@ -7,10 +7,8 @@ Move = namedtuple('Move', 'row col options')
 # TODO: Cache this and have board keep track of it?
 def _find_empty_spots(board):
     spots = []
-    for row in xrange(board.board_size):
-        for col in xrange(board.board_size):
-            if board.board[row][col] == 0:
-                spots.append((row, col))
+    for row in xrange(9):
+        spots.extend([(row, col) for col in xrange(9) if not board.board[row][col]])
     return spots
 
 def count_solutions(board):
@@ -24,18 +22,21 @@ def count_solutions(board):
     Returns:
         One of the integers 0, 1, or 2.
     """
-    # TODO: Remove unnecessary code from fill_board
     # For now, don't worry about finding most constrained position
-    solutions = 0
+    solutions = 0 # Put in scope for case where there are no solutions
+    spots = _find_empty_spots(board)
     for row, col in _find_empty_spots(board):
         remaining = board.valid_moves(row, col)
         if not remaining:
             # Dead-end position
             return 0
+        solutions = 0
         for move in remaining:
             # Try all of these moves
-            board.board[row][col] = move
-            if fill_board(board):
+            # fill_board will attempt to complete the board, so copy it for future checks
+            board_copy = copy.deepcopy(board)
+            board_copy.board[row][col] = move
+            if fill_board(board_copy):
                 solutions += 1
                 if solutions == 2:
                     return 2
@@ -67,12 +68,11 @@ def fill_board(board):
             if len(remaining) < smallest_move:
                 smallest_move = len(remaining)
                 next_moves.append(Move(row, col, remaining))
-    # Check for won position
-    if not next_moves and board._is_valid_board():
+    # Check for won position; board must be valid because moves were
+    #   chosen only from valid moves
+    if not next_moves:
         # Pass up the winning board
         return board
-    # Check for more than one winning solution
-    found_winning_move = False
     # Otherwise, make one of the most constrained moves
     for move in next_moves:
         for option in move.options:
