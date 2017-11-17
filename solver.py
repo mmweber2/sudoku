@@ -1,6 +1,9 @@
 from collections import namedtuple
 import copy
 
+# TODO: The board gets solved, but then visits the last position twice. Why?
+
+
 # A move has a row, column, and other options to play instead
 Move = namedtuple('Move', 'row col options')
 
@@ -25,15 +28,15 @@ def count_solutions(board):
     # For now, don't worry about finding most constrained position
     print "Called with board"
     print board
-    solutions = 0 # Put in scope for case where there are no solutions
-    # TODO: If board is solved, return 1 (True)
     for row in xrange(9):
         for col in xrange(9):
+            solutions = 0
             if board.board[row][col]: # Cell is not empty
                 continue
             # At least one cell is open (end condition check)
             print "Looking at position ", row, col
             remaining = board.valid_moves(row, col)
+            print board
             print "Remaining here is ", remaining
             for move in remaining:
                 # Try all of these moves
@@ -41,17 +44,13 @@ def count_solutions(board):
                 # Make the move on this board, but don't keep all the changes
                 #    made by the recursive calls from here
                 print "Before, solutions is ", solutions
-                solutions += count_solutions(copy.deepcopy(board))
+                board_copy = copy.deepcopy(board)
+                solutions += count_solutions(board_copy)
                 print "After, solutions is ", solutions
                 # Stop iterating if more than one solution is found
                 if solutions >= 2:
                     return solutions
-                if solutions:
-                    print "After move ", move
-                    print "Solutions is ", solutions
-            # Dead-end position; stop as soon as we find any such position
-            if not solutions: # Tried all moves but none of them worked
-                return 0
+            return solutions # Will be 0 or 1
     # Board is full
     print "Board is done!"
     return 1
