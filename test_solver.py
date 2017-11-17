@@ -181,8 +181,37 @@ def test_find_empty_spots_single():
                       ])
     assert_equals(_find_empty_spots(b), [(1, 3)])
 
+def test_count_solutions_done():
+    assert_equals(count_solutions(board5_result), 1)
+
+def test_count_solutions_single_move_left():
+    b = Board([
+                      [8, 9, 2, 1, 3, 4, 7, 5, 6],
+                      [7, 6, 3, 0, 5, 8, 2, 4, 1],
+                      [4, 5, 1, 2, 7, 6, 3, 8, 9],
+                      [6, 3, 8, 4, 9, 7, 1, 2, 5],
+                      [9, 2, 7, 5, 6, 1, 4, 3, 8],
+                      [5, 1, 4, 3, 8, 2, 9, 6, 7],
+                      [1, 7, 6, 8, 2, 3, 5, 9, 4],
+                      [2, 8, 9, 7, 4, 5, 6, 1, 3],
+                      [3, 4, 5, 6, 1, 9, 8, 7, 2]
+               ])
+    assert_equals(count_solutions(b), 1)
+
+def test_count_solutions_two_moves_left():
+    b = Board([
+                      [8, 9, 2, 1, 3, 4, 7, 5, 6],
+                      [7, 6, 3, 0, 5, 8, 2, 4, 1],
+                      [4, 5, 1, 2, 7, 6, 3, 8, 9],
+                      [6, 3, 8, 4, 9, 7, 1, 2, 5],
+                      [9, 2, 7, 5, 6, 1, 4, 3, 8],
+                      [5, 1, 4, 3, 8, 2, 9, 6, 7],
+                      [1, 7, 6, 8, 2, 0, 5, 9, 4],
+                      [2, 8, 9, 7, 4, 5, 6, 1, 3],
+                      [3, 4, 5, 6, 1, 9, 8, 7, 2]
+               ])
+    assert_equals(count_solutions(b), 1)
+
 def test_count_solutions_unique():
     for b in (board1, board2, board3, board4, board5):
-        print b
         assert_equals(count_solutions(b), 1)
-    
