@@ -1,7 +1,16 @@
 from board import Board
 from solver import fill_board
+from solver import count_solutions
 from math import sqrt
 import random
+
+def generate_puzzle():
+    """Generates a new, ready to fill Board object.
+
+    Returns:
+        A randomly generated Board object with a unique solution.
+    """
+    return remove_moves(generate_full_board)
 
 def generate_full_board():
     """Generates a new, completed board.
@@ -23,17 +32,24 @@ def remove_moves(board):
     # If removing a number creates more than one solution, it will only get worse
     #   as more numbers are removed, so don't try the same position twice.
     # Whether or not a number is removed, it should only be tried once.
-    tried_positions = set()
-    while True:
-        current = all_positions.pop()
+    for position in all_positions:
         # Map full number to row, col pair
-        c_row = current / 9
-        c_col = current % 9
-        answer_number = board[c_row][c_col]
-        board[c_row][c_col] = 0
-        if len(board.valid_moves(c_row, c_col)) == 1:
-            # TODO
-            pass
+        c_row = position / 9
+        c_col = position % 9
+        answer_number = board.board[c_row][c_col]
+        if answer_number == 0:
+            # Nothing to remove at this position
+            continue
+        board.board[c_row][c_col] = 0
+        solution_count = count_solutions(board)
+        # Solution count should never be 0
+        if solution_count == 2:
+            # Can't remove this number and maintain a unique board
+            board.board[c_row][c_col] = answer_number
+        else:
+            assert solution_count == 1
+    return board
+
 
         
 
