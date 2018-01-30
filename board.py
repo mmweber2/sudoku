@@ -79,28 +79,25 @@ class Board(object):
         Returns:
             True iff the board is valid, and False otherwise.
         """
-        # We can't use _numbers_in_row, _numbers_in_column,
-        #    or _numbers_in_box for these because those don't
-        #    check for duplicates.
+        # We can't use _numbers_in_row, _numbers_in_column,or _numbers_in_box
+        #   for these because those don't check for duplicates.
         # Check rows
         for i in xrange(self.board_size):
             row_numbers = set()
             for number in self.board[i]:
-                if number == 0:
-                    continue
                 if number in row_numbers:
                     return False
-                row_numbers.add(number)
+                if number: # Don't add 0
+                    row_numbers.add(number)
         # Check columns
         for j in xrange(self.board_size):
             col_numbers = set()
             for i in xrange(self.board_size):
                 number = self.board[i][j]
-                if number == 0:
-                    continue
                 if number in col_numbers:
                     return False
-                col_numbers.add(number)
+                if number: # Don't add 0
+                    col_numbers.add(number)
         # Check boxes
         # Start at upper left of each box, then move one box width in each direction
         move_range = xrange(0, self.board_size, self.box_size)
@@ -110,11 +107,10 @@ class Board(object):
             for i in xrange(box_x, box_x + self.box_size):
                 for j in xrange(box_y, box_y + self.box_size):
                     number = self.board[i][j]
-                    if number == 0:
-                        continue
                     if number in box_numbers:
                         return False
-                    box_numbers.add(number)
+                    if number: # Don't add 0
+                        box_numbers.add(number)
         return True
 
     def _numbers_in_row(self, row):
@@ -157,7 +153,7 @@ class Board(object):
             raise IndexError("Column {} is not a valid integer".format(col))
         col_numbers = set()
         for i in xrange(self.board_size):
-            if self.board[i][col] != 0:
+            if self.board[i][col]:
                 col_numbers.add(self.board[i][col])
         return col_numbers
 
@@ -199,7 +195,7 @@ class Board(object):
         box_numbers = set()
         for i in xrange(box_start_row, box_start_row + self.box_size):
             for j in xrange(box_start_col, box_start_col + self.box_size):
-                if self.board[i][j] != 0:
+                if self.board[i][j]:
                     box_numbers.add(self.board[i][j])
         return box_numbers
 
@@ -222,7 +218,7 @@ class Board(object):
         """
         if not (self._valid_pos(row) and self._valid_pos(column)):
             raise IndexError("Invalid row or column index.")
-        if self.board[row][column] != 0:
+        if self.board[row][column]:
             raise IndexError(
                 "Non-zero number already at position {},{}: {}".format(
                     row, column, self.board[row][column])
