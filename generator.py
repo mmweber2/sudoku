@@ -1,4 +1,5 @@
 from board import Board
+import copy
 from solver import fill_board
 from solver import count_solutions
 from math import sqrt
@@ -10,7 +11,8 @@ def generate_puzzle():
     Returns:
         A randomly generated Board object with a unique solution.
     """
-    return remove_moves(generate_full_board)
+    board = generate_full_board()
+    return remove_moves(board)
 
 def generate_full_board():
     """Generates a new, completed board.
@@ -26,9 +28,10 @@ def generate_full_board():
 def remove_moves(board):
     """Removes moves from board as long as there is only one valid solution."""
     # Generate 0-81 and shuffle them
-    # random.shuffle exists, but according to the documentation, it doesn't
-    #   generate most permutations, so I use random.sample.
-    all_positions = random.sample(range(81), 81)
+    # According to the documentation, random.shuffle doesn't generate most permutations,
+    #   but it should be enough to make it interesting.
+    all_positions = range(81)
+    random.shuffle(all_positions)
     # If removing a number creates more than one solution, it will only get worse
     #   as more numbers are removed, so don't try the same position twice.
     # Whether or not a number is removed, it should only be tried once.
@@ -40,17 +43,27 @@ def remove_moves(board):
         if answer_number == 0:
             # Nothing to remove at this position
             continue
-        board.board[c_row][c_col] = 0
-        solution_count = count_solutions(board)
+        board_copy = copy.deepcopy(board)
+        board_copy.board[c_row][c_col] = 0
+        # Make a copy of the board because count_solutions modifies the board
+        solution_count = count_solutions(copy.deepcopy(board_copy))
         # Solution count should never be 0
-        if solution_count == 2:
+        if solution_count == 1:
             # Can't remove this number and maintain a unique board
-            board.board[c_row][c_col] = answer_number
-        else:
-            assert solution_count == 1
+            board = board_copy
+            assert board.board[c_row][c_col] == 0
     return board
 
-
+if __name__ == "__main__":
+    #print generate_puzzle()
+    puzzles = []
+    for _ in xrange(1):
+        puzzle = generate_puzzle()
+        puzzles.append("".join(str(x) for row in puzzle.board for x in row))
+    puzzles = "\n".join(puzzles)
+    with open("puzzles.txt", "a") as fh:
+        fh.write("-")
+        fh.write(puzzles)
         
 
 
