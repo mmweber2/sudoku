@@ -62,7 +62,7 @@ if __name__ == "__main__":
         puzzles.append("".join(str(x) for row in puzzle.board for x in row))
     puzzles = "\n".join(puzzles)
     with open("puzzles.txt", "a") as fh:
-        fh.write("-")
+        fh.write("\n")
         fh.write(puzzles)
         
 

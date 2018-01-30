@@ -44,8 +44,8 @@ def count_solutions(board):
                     # If it's possible to fill the board after making this move,
                     #   consider this move a valid solution
                     solutions += 1
-                if solutions >= 2:
-                    return solutions
+                    if solutions >= 2:
+                        return solutions
     # If solutions never reached more than 1, there is only one solution for the board
     return 1
 
@@ -71,8 +71,6 @@ def _fill_simple(board):
 def fill_board(board):
     """
     Fully solves the board, if possible, and returns the result.
-
-    When generator is set to True, a random play will be chosen when there are multiple solutions.
 
     Returns:
         The solved board object if the board is solvable, None otherwise.

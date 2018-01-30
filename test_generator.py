@@ -8,9 +8,10 @@ def is_full(board):
     return True
 
 def test_generate_puzzle():
-    for _ in xrange(20):
+    for _ in xrange(1): #20
         # fill_board already checks validity, so just check that it is full
         b = generate_full_board()
         assert is_full(b)
         ready = remove_moves(b)
         assert ready is not None
+        assert not is_full(ready)
