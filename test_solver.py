@@ -211,7 +211,21 @@ def test_count_solutions_two_moves_left():
                       [3, 4, 5, 6, 1, 9, 8, 7, 2]
                ])
     assert_equals(count_solutions(b), 1)
-
+    
+def test_count_solutions_empty():
+    b = Board([
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+               ])
+    assert count_solutions(b) > 1
+    
 def test_count_solutions_unique():
     for b in (board1, board2, board3, board4, board5):
         assert_equals(count_solutions(b), 1)
