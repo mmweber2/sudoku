@@ -6,7 +6,6 @@ import copy
 # A move has a row, column, and other options to play instead
 Move = namedtuple('Move', 'row col options')
 
-# TODO: Cache this and have board keep track of it?
 def _find_empty_spots(board):
     spots = []
     for row in xrange(9):
@@ -27,25 +26,22 @@ def count_solutions(board):
     # Fill in all single-solution positions and check for unwinnable positions
     if not _fill_simple(board):
         return 0 # Unwinnable position
-    for row in xrange(9):
-        for col in xrange(9):
-            # Keep track of solutions from each position; there should be
-            #   multiple valid plays in different positions,
-            #   since _fill_simple handled the zero and single move cases.
-            solutions = 0 
-            if board.board[row][col]: # Cell is not empty
-                continue
-            for move in board.valid_moves(row, col):
-                board_copy = copy.deepcopy(board)
-                # Make the move on this board, but don't keep all the changes
-                #    made by the recursive calls from here
-                board_copy.board[row][col] = move
-                if fill_board(board_copy):
-                    # If it's possible to fill the board after making this move,
-                    #   consider this move a valid solution
-                    solutions += 1
-                    if solutions >= 2:
-                        return solutions
+    for row, col in _find_empty_spots(board):
+        # Keep track of solutions from each position; there should be
+        #   multiple valid plays in different positions,
+        #   since _fill_simple handled the zero and single move cases.
+        solutions = 0 
+        for move in board.valid_moves(row, col):
+            board_copy = copy.deepcopy(board)
+            # Make the move on this board, but don't keep all the changes
+            #    made by the recursive calls from here
+            board_copy.board[row][col] = move
+            if fill_board(board_copy):
+                # If it's possible to fill the board after making this move,
+                #   consider this move a valid solution
+                solutions += 1
+                if solutions >= 2:
+                    return solutions
     # If solutions never reached more than 1, there is only one solution for the board
     return 1
 
