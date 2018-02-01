@@ -19,8 +19,8 @@ class Board(object):
         Raises:
             ValueError: board_array is not a valid board configuration.
         """
-        if not Board._is_valid_start_board(board_array):
-            raise ValueError("Invalid start board configuration.")
+        # Raises an exception if not valid
+        assert Board._is_valid_start_board(board_array)
         self.board = board_array
         self.board_size = len(board_array)
         self.box_size = int(sqrt(self.board_size))
@@ -28,7 +28,32 @@ class Board(object):
     def __str__(self):
         return "\n".join(" ".join(str(x) for x in row) for row in self.board)
 
-    # TODO: Check if this board has multiple solutions
+    @staticmethod
+    def string_to_array(board_string):
+        """Converts a board string into board array format.
+
+        This function does not check the validity of the board array.
+
+        Args:
+            board_string: An 81-character string representing the rows of
+                a board merged together, where the first character is the
+                first character on the top row (the upper left number),
+                the last character is the last character on the bottom row
+                (the bottom right number), and zeroes represent empty spaces.
+
+        Returns:
+            A 2D array for use with the Board constructor.
+
+        Raises:
+            ValueError: board_string is not valid.
+    """
+        if len(board_string) != 81:
+            raise ValueError("Board string must be 81 characters")
+        rows = []
+        for row_start in xrange(0, 73, 9):
+            rows.append([int(num) for num in board_string[row_start:row_start + 9]])
+        return rows
+
     @staticmethod
     def _is_valid_start_board(board_array):
         """Confirms that a board array is in valid Sudoku format.
@@ -188,10 +213,10 @@ class Board(object):
         # Don't use _valid_pos; box requirements are more specific
         size = self.board_size
         for start in (box_start_row, box_start_col):
-            if not isinstance(start, int):
-                raise TypeError("Box start numbers must be integers")
-            if not (0 <= start < size and start % self.box_size == 0):
-                raise IndexError("Invalid box start number: {}".format(start))
+            # Avoid hardcoding valid positions of (0, 3, 6)
+            if (not (self._valid_pos(box_start_row) and self._valid_pos(box_start_col)) or
+                not (0 <= start < size and start % self.box_size == 0)):
+                    raise IndexError("Invalid box start number: {}".format(start))
         box_numbers = set()
         for i in xrange(box_start_row, box_start_row + self.box_size):
             for j in xrange(box_start_col, box_start_col + self.box_size):
