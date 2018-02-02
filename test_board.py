@@ -330,7 +330,23 @@ def test_valid_moves_invalid_input():
     assert_raises(IndexError, b.valid_moves, 9, 0)
 
 def test_string_to_array_full():
-    pass
+    # Broken into substrings for easier visualization
+    board_string = ("865729431" + "312648975" + "794135862" + "581974326" +
+                    "476213598" + "239586714" + "957462183" + "123857649" +
+                    "648391257")
+    result = Board.string_to_array(board_string)
+    expected = [
+                [8, 6, 5, 7, 2, 9, 4, 3, 1],
+                [3, 1, 2, 6, 4, 8, 9, 7, 5],
+                [7, 9, 4, 1, 3, 5, 8, 6, 2],
+                [5, 8, 1, 9, 7, 4, 3, 2, 6],
+                [4, 7, 6, 2, 1, 3, 5, 9, 8],
+                [2, 3, 9, 5, 8, 6, 7, 1, 4],
+                [9, 5, 7, 4, 6, 2, 1, 8, 3],
+                [1, 2, 3, 8, 5, 7, 6, 4, 9],
+                [6, 4, 8, 3, 9, 1, 2, 5, 7]
+                ]
+    assert_equals(result, expected)
 
 def test_string_to_array_zeroes():
     board_string = "0" * 81
@@ -352,7 +368,9 @@ def test_string_to_array_partially_full():
     assert_equals(result, expected)
 
 def test_string_to_array_wrong_length():
-    pass
+    board_string = "0" * 80
+    assert_raises(ValueError, Board.string_to_array, board_string)
 
 def test_string_to_array_non_ints():
-    pass
+    board_string = "x" * 81
+    assert_raises(ValueError, Board.string_to_array, board_string)
