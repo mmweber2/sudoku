@@ -20,21 +20,20 @@ def generate_full_board():
     Returns:
         A randomly generated, filled Board object.
     """
-    # Randomly fill the first row, fill the rest, then make a transfomation
+    # Randomly fill the first row, then fill the rest
     first_row = random.sample(xrange(1, 10), 9)
     input_array = [first_row] + [([0] * 9) for _ in xrange(8)]
     return fill_board(Board(input_array))
 
 def remove_moves(board):
     """Removes moves from board as long as there is only one valid solution."""
-    # Generate 0-81 and shuffle them
+    # Generate 0-81 and shuffle them so that the open spaces aren't all in the top
     # According to the documentation, random.shuffle doesn't generate most permutations,
     #   but it should be enough to make it interesting.
     all_positions = range(81)
     random.shuffle(all_positions)
     # If removing a number creates more than one solution, it will only get worse
     #   as more numbers are removed, so don't try the same position twice.
-    # Whether or not a number is removed, it should only be tried once.
     for position in all_positions:
         # Map full number to row, col pair
         c_row = position / 9
@@ -54,8 +53,29 @@ def remove_moves(board):
             assert board.board[c_row][c_col] == 0
     return board
 
+def rotate_board(board_array):
+    """Rotates a single board array to make three more board arrays.
+
+    Rotates board_array by 90, 180, and 270 degrees to create 3 variants
+        of the board array.
+    """
+    rotations = []
+    for _ in xrange(3): # Rotate 3 times; 4th rotation is the original array
+        half_size = 5 # 9 arrays, up to (not including) row 5
+        for first in xrange(half_size):
+            last = 8 - first # 9 - 1 - first
+            for layer in xrange(first, last):
+                offset = layer - first # How far in is this layer?
+                top = board_array[first][layer] # Copy the top layer
+                board_array[first][layer] = board_array[last-offset][first]
+                board_array[last-offset][first] = board_array[last][last-offset]
+                board_array[last][last-offset] = board_array[layer][last]
+                board_array[layer][last] = top
+        # Further rotations will change the array, so copy this version
+        rotations.append(copy.deepcopy(board_array))
+    return rotations
+
 if __name__ == "__main__":
-    #print generate_puzzle()
     puzzles = []
     for _ in xrange(1):
         puzzle = generate_puzzle()
